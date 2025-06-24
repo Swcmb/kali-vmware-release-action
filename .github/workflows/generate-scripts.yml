@@ -1,0 +1,92 @@
+name: Generate & Upload Download Scripts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  make_scripts_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Generate Linux script
+      run: |
+        cat << 'EOF' > download_linux.sh
+#!/bin/bash
+set -e
+mkdir -p kali_parts
+cd kali_parts
+
+echo "Downloading parts..."
+curl -LO https://github.com/Swcmb/kali-vmware-release-action/releases/download/kali-2025.2-build1/kali.7z.part_aa
+curl -LO https://github.com/Swcmb/kali-vmware-release-action/releases/download/kali-2025.2-build1/kali.7z.part_ab
+
+echo "Merging parts..."
+cat kali.7z.part_* > kali.7z
+
+echo "Extracting..."
+7z x kali.7z
+
+echo "Done!"
+EOF
+        chmod +x download_linux.sh
+
+    - name: Generate macOS script
+      run: |
+        cat << 'EOF' > download_mac.sh
+#!/bin/bash
+set -e
+mkdir -p kali_parts
+cd kali_parts
+
+echo "Downloading parts..."
+curl -LO https://github.com/Swcmb/kali-vmware-release-action/releases/download/kali-2025.2-build1/kali.7z.part_aa
+curl -LO https://github.com/Swcmb/kali-vmware-release-action/releases/download/kali-2025.2-build1/kali.7z.part_ab
+
+echo "Merging parts..."
+cat kali.7z.part_* > kali.7z
+
+echo "Extracting..."
+7z x kali.7z
+
+echo "Done!"
+EOF
+        chmod +x download_mac.sh
+
+    - name: Generate Windows batch script
+      run: |
+        cat << 'EOF' > download_windows.bat
+@echo off
+mkdir kali_parts
+cd kali_parts
+
+echo Downloading parts...
+powershell -Command "Invoke-WebRequest -Uri https://github.com/Swcmb/kali-vmware-release-action/releases/download/kali-2025.2-build1/kali.7z.part_aa -OutFile kali.7z.part_aa"
+powershell -Command "Invoke-WebRequest -Uri https://github.com/Swcmb/kali-vmware-release-action/releases/download/kali-2025.2-build1/kali.7z.part_ab -OutFile kali.7z.part_ab"
+
+echo Merging parts...
+copy /b kali.7z.part_aa + kali.7z.part_ab kali.7z
+
+echo Extracting...
+7z.exe x kali.7z
+
+echo Done!
+pause
+EOF
+
+    - name: Create GitHub Release with scripts
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: download-scripts-2025.2
+        name: Kali 2025.2 Download Scripts
+        files: |
+          download_linux.sh
+          download_mac.sh
+          download_windows.bat
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
