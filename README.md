@@ -15,7 +15,11 @@
 3. 等待任务执行完成
 4. 前往 [Releases](../../releases) 页面下载分卷文件
 
-## 🔄 文件合并说明
 
-Release 中会生成若干文件：
+
+---
+
+## 📜 License
+
+MIT License
 
