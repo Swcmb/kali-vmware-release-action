@@ -1,0 +1,35 @@
+name: Download Kali and Upload Release
+
+on:
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  download_and_upload:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install required tools
+      run: |
+        sudo apt update
+        sudo apt install -y p7zip-full curl
+
+    - name: Download Kali image
+      run: |
+        curl -L -o kali.7z https://cdimage.kali.org/kali-2025.2/kali-linux-2025.2-vmware-amd64.7z
+
+    - name: Split the file into parts (<2GB)
+      run: |
+        mkdir split_parts
+        split -b 1900M kali.7z split_parts/kali.7z.part_
+
+    - name: Upload split files to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: kali-2025.2
+        name: Kali 2025.2 VMware Release
+        files: split_parts/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
