@@ -16,8 +16,7 @@ jobs:
 
     - name: Generate Linux script
       run: |
-        cat << 'EOF' > download_linux.sh
-#!/bin/bash
+        echo '#!/bin/bash
 set -e
 mkdir -p kali_parts
 cd kali_parts
@@ -33,13 +32,12 @@ echo "Extracting..."
 7z x kali.7z
 
 echo "Done!"
-EOF
+' > download_linux.sh
         chmod +x download_linux.sh
 
     - name: Generate macOS script
       run: |
-        cat << 'EOF' > download_mac.sh
-#!/bin/bash
+        echo '#!/bin/bash
 set -e
 mkdir -p kali_parts
 cd kali_parts
@@ -55,13 +53,12 @@ echo "Extracting..."
 7z x kali.7z
 
 echo "Done!"
-EOF
+' > download_mac.sh
         chmod +x download_mac.sh
 
     - name: Generate Windows batch script
       run: |
-        cat << 'EOF' > download_windows.bat
-@echo off
+        echo '@echo off
 mkdir kali_parts
 cd kali_parts
 
@@ -77,9 +74,9 @@ echo Extracting...
 
 echo Done!
 pause
-EOF
+' > download_windows.bat
 
-    - name: Create GitHub Release with scripts
+    - name: Upload scripts to Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: download-scripts-2025.2
