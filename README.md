@@ -1,7 +1,3 @@
-以下是你提供内容的修改版本，语义清晰，平台兼容性好，格式统一美观：
-
----
-
 # 📦 Kali VMware 自动发布仓库
 
 本仓库用于通过 GitHub Actions 加速下载 Kali Linux VMware 镜像。
